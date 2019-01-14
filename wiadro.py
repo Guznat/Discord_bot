@@ -64,25 +64,27 @@ async def on_message(message):
         name = message.content[len('!imie'):].strip()
         await client.send_message(message.channel, '{} CHYBA COS CI STOI :LUL: !'.format(name))
 
-    if message.content == "hej":
+    if message.content.lower() in ("hej", "czesc", "cześć", "siema", "witam"):
         if message.author.id == ('224550108136472576'):
-            await client.send_message(message.channel,'```roll 1 krytyczne niepowodzenie.``` Witając się połknąłeś pszczołę która Cię ugryzła. Trafiasz do szpitala tracisz 2 tury.')
+            await client.send_message(message.channel,
+                                      '```roll 1 krytyczne niepowodzenie.``` Witając się połknąłeś pszczołę która Cię ugryzła. Trafiasz do szpitala tracisz 2 tury.')
+
         elif message.author.id == ('222143837605330945'):
 
-            await client.send_message(message.channel,'Sebek, daj chlebek')
+            await client.send_message(message.channel, 'Sebek, daj chlebek')
         elif message.author.id == ('222484443368128513'):
 
-            await client.send_message(message.channel,'RYBIARZ DO WODY UCIEKAJ!')
+            await client.send_message(message.channel, 'RYBIARZ DO WODY UCIEKAJ!')
         elif message.author.id == ('215167611636416514'):
-            await client.send_message(message.channel,'Witaj mistrzu, dobrze Cię widzieć!')
+            await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
         elif message.author.id == ('206100992180224002'):
-            await client.send_message(message.channel,'ŻUBEEER ')
+            await client.send_message(message.channel, 'ŻUBEEER ')
         elif message.author.id == ('232860146622005248'):
-            await client.send_message(message.channel,'Na przyrke!!')
+            await client.send_message(message.channel, 'Na przyrke!!')
         elif message.author.id == ('318134058171367425'):
-            await client.send_message(message.channel,'No cześć, jak odbyt po dzisiejszej nocy?')
+            await client.send_message(message.channel, 'No cześć, jak odbyt po dzisiejszej nocy?')
         elif message.author.id == ('318134058171367425'):
-            await client.send_message(message.channel,'No cześć, jak odbyt po dzisiejszej nocy?')
+            await client.send_message(message.channel, 'Nie smutaj, wszystko bedzie dobrze!')
         else:
             await client.send_message(message.channel, 'No galosz')
 
@@ -91,7 +93,10 @@ async def on_message(message):
         await client.send_message(message.channel, 'temu stanie.')
 
     elif message.content == "XD":
-        await client.send_message(message.channel, 'IKS KURWA DE.')
+        await client.send_message(message.channel, 'IKS DE.')
+
+
+
 
 
 @client.command()
