@@ -1,135 +1,155 @@
+from datetime import datetime
 import discord
 import random
 import asyncio
 import aiohttp
 import json
 from discord import Game
-from discord.ext.commands import Bot
+from discord.ext import commands
+from itertools import cycle
+import asyncio
+from discord.utils import get
+from discord.voice_client import VoiceClient
+import youtube_dl
 
-BOT_PREFIX = ("?", "!")
-TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dxt_aw.jovVKTzRPaaqgWuXzutyOToTf2A"  # Get at discordapp.com/developers/applications/me
+BOT_PREFIX = ("?", "$")
+TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
-client = Bot(command_prefix=BOT_PREFIX)
+client = commands.Bot(command_prefix=BOT_PREFIX)
+players = {}
+status = ['AMENUS','BUCH']
 
+async def change_status():
+    await client.wait_until_ready()
+    msgs = cycle(status)
+    while not client.is_closed:
+        current_status = next(msgs)
+        await client.change_presence(game=Game(name=current_status))
+        await asyncio.sleep(5)
 
-@client.event
-async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!siema'):
-        msg = 'Sieeeeeema {0.author.mention}!'.format(message)
-        await client.send_message(message.channel, msg)
-
-
-@client.command(name='!wiadro',
-                description="Tak/nie",
-                brief="Odp z zewnatrz",
-                aliases=['wiadereczko', 'wiad', 'wiadroo'],
-                pass_context=True)
-async def wiadro(context):
-    possible_responses = [
-        'Nabijaj wiadro',
-        'Nabijaj 2 wiadra',
-        'Jeboj 3!',
-        'Resetuj biosa wal 4',
-        '5, juz po tobie',
-    ]
-    await client.say(random.choice(possible_responses) + ", " + context.message.author.mention)
-
-
-@client.event
-async def on_message(message):
-    if message.content.startswith('!wali'):
-        await client.send_message(message.channel, 'Kto wali wiadro? !imie <tutaj>')
-
-        def check(msg):
-            return msg.content.startswith('!imie')
-
-        message = await client.wait_for_message(author=message.author, check=check)
-        name = message.content[len('!zakonnik'):].strip()
-        await client.send_message(message.channel, '{} WALI WIADERECZKO!'.format(name))
-
-
-@client.event
-async def on_message(message):
-    if message.content.startswith('!kto'):
-        await client.send_message(message.channel, 'Kto poliże nutelle? !imie <tutaj>')
-
-        def check(msg):
-            return msg.content.startswith('!imie')
-
-        message = await client.wait_for_message(author=message.author, check=check)
-        name = message.content[len('!imie'):].strip()
-        await client.send_message(message.channel, '{} CHYBA COS CI STOI :LUL: !'.format(name))
-
-    if message.content.lower() in ("hej", "czesc", "cześć", "siema", "witam"):
-        if message.author.id == ('224550108136472576'):
-            await client.send_message(message.channel,
-                                      '```roll 1 krytyczne niepowodzenie.``` Witając się połknąłeś pszczołę która Cię ugryzła. Trafiasz do szpitala tracisz 2 tury.')
-
-        elif message.author.id == ('222143837605330945'):
-
-            await client.send_message(message.channel, 'Sebek, daj chlebek')
-        elif message.author.id == ('222484443368128513'):
-
-            await client.send_message(message.channel, 'RYBIARZ DO WODY UCIEKAJ!')
-        elif message.author.id == ('215167611636416514'):
-            await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
-        elif message.author.id == ('206100992180224002'):
-            await client.send_message(message.channel, 'ŻUBEEER ')
-        elif message.author.id == ('232860146622005248'):
-            await client.send_message(message.channel, 'Na przyrke!!')
-        elif message.author.id == ('318134058171367425'):
-            await client.send_message(message.channel, 'No cześć, jak odbyt po dzisiejszej nocy?')
-        elif message.author.id == ('318134058171367425'):
-            await client.send_message(message.channel, 'Nie smutaj, wszystko bedzie dobrze!')
-        else:
-            await client.send_message(message.channel, 'No galosz')
-
-
-    elif message.content == "kto poliże":
-        await client.send_message(message.channel, 'temu stanie.')
-
-    elif message.content == "XD":
-        await client.send_message(message.channel, 'IKS DE.')
-
-
-
-
-
-@client.command()
-async def square(number):
-    squared_value = int(number) * int(number)
-    await client.say(str(number) + " squared is " + str(squared_value))
 
 
 @client.event
 async def on_ready():
-    await client.change_presence(game=Game(name="WALE WIADRO NA ZAMKU ZE ZŁOTA"))
-    print("Logged in as " + client.user.name)
+    print('Bot w gotowosci')
+
+
+@client.event
+async def on_member_join(member):
+    role = discord.utils.get(member.server.roles, name='🌿Gość w zakonie')
+    await client.add_roles(member, role)
+    await client.say(f"```WITAMY W ZAKONIE {member}! Dostajesz rangę: {role}```")
+
+
+
+
+
+#                                          COMMANDS DEFINITIONS
+
+
+@client.command(pass_context=True)
+async def join(ctx):
+    channel = ctx.message.author.voice.voice_channel
+    await client.join_voice_channel(channel)
+
+
+@client.command(pass_context=True)
+async def leave(ctx):
+    server = ctx.message.server
+    voice_client = client.voice_client_in(server)
+    await voice_client.disconnect()
+
+@client.command(pass_context=True)
+async def play(ctx, url):
+    server = ctx.message.server
+    voice_client = client.join_voice_channel(server)
+    player = await voice_client.create_ytdl_player(url)
+    players[server.id] = player
+    player.start()
+
 
 
 @client.command()
-async def pizza(message):
-    url = 'https://api.coindesk.com/v1/bpi/currentprice/BTC.json'
-    if message.content.startswith('!pizza'):
-        async with aiohttp.ClientSession() as session:  # Async HTTP request
-            raw_response = await session.get(url)
-            response = await raw_response.text()
-            response = json.loads(response)
-            await client.say("Twoja pizza za bitcoin kosztuje: $" + response['bpi']['USD']['rate'])
+async def roll20():
+    #role = discord.utils.get(member.server.roles, name='🌿 Gracz RPG 🎲')
+    embed = discord.Embed(
+        title= 'Roll20!',
+        description= 'Wbijać bohaterowie, przygoda czeka! ``` https://roll20.net/ ```',
+        colour = discord.Colour.blue()
+    )
+
+    embed.set_footer(text=f'@Gracz RPG (soon)')
+    embed.set_image(url='https://app.roll20.net/v2/images/roll20-logo.png?v=2')
+    embed.set_thumbnail(url='https://app.roll20.net/v2/images/roll20-logo.png?v=2')
+    embed.set_author(name='N4T4N')
+
+    await client.say(embed=embed)
 
 
-async def list_servers():
-    await client.wait_until_ready()
-    while not client.is_closed:
-        print("Current servers:")
-        for server in client.servers:
-            print(server.name)
-        await asyncio.sleep(600)
+@client.command()
+async def godzina():
+    date = datetime
+    await client.say(f"Jest {date.hour}:{date.minute} | {date.day}")
 
 
-client.loop.create_task(list_servers())
+@client.command()
+async def pogoda(d=49.82,s=19.04):
+    url = f'http://api.weatherunlocked.com/api/current/{str(d)},{str(s)}?app_id=b2b042cf&app_key=0b5e4d36d7c17551b832bc12c53f3b43'
+    async with aiohttp.ClientSession() as session:  # Async HTTP request
+        raw_response = await session.get(url)
+        response = await raw_response.text()
+        response = json.loads(response)
+        print(response)
+        await client.say("W podanej lokalizacji jest teraz: " + str(response['temp_c']) + "°C. Temperatura odczuwalna to: " + str(
+            response['feelslike_c']) + "°C. <:shieet:287968329342386177>")
+
+
+@client.command(pass_context=True)
+async def clearsecret(ctx, amount=3):
+    channel = ctx.message.channel
+    messages = []
+    async for message in client.logs_from(channel, limit=int(amount)):
+        messages.append(message)
+    await client.delete_messages(messages)
+    await client.say('Wiadomości skasowane')
+
+
+
+
+
+#                                               ON_MESSAGE EVENTS
+
+
+
+
+
+@client.event
+async def on_message(message):
+    # SERVER MESSAGE LOG
+    author = message.author
+    content = message.content
+    channel = message.channel
+    print(f'{channel} | {author}: {content}')
+
+    # REACTION
+
+    if message.author.id == ('215167611636416514'):
+        PIW = get(client.get_all_emojis(), name='PIW')
+        SKO = get(client.get_all_emojis(), name='SKO')
+        await client.add_reaction(message, PIW)
+        await client.add_reaction(message, SKO)
+        #await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
+
+
+    # LAST CODE LINE FOR COMMANDS WORKING
+    await client.process_commands(message)
+
+
+@client.event
+async def on_message_delete(message):
+    author = message.author
+    channel = message.channel
+    await client.send_message(channel, f'Wiadomość od {author} została skasowana na kanale {channel}')
+
+client.loop.create_task(change_status())
 client.run(TOKEN)
