@@ -58,6 +58,7 @@ async def on_member_join(member):
 async def join(ctx):
     channel = ctx.message.author.voice.voice_channel
     await client.join_voice_channel(channel)
+    await client.say(f"Dołączono do {channel}")
 
 
 
@@ -66,6 +67,7 @@ async def leave(ctx):
     server = ctx.message.server
     voice_client = client.voice_client_in(server)
     await voice_client.disconnect()
+    await client.say(f"Odchodzę z {voice_client}")
 
 @client.command(pass_context=True)
 async def play(ctx, url):
@@ -73,21 +75,25 @@ async def play(ctx, url):
     voice = client.voice_client_in(server)
     player = await voice.create_ytdl_player(url, ytdl_options={'default_search': 'auto', 'quality': 'highestaudio', 'liveBuffer':'50000'})
     players[server.id] = player
+    await client.say(f"Puszczam: {player.title}")
     player.start()
 
 @client.command(pass_context=True)
 async def pause(ctx):
     id = ctx.message.server.id
+    await client.say("Zatrzymuje")
     players[id].pause()
 
 @client.command(pass_context=True)
 async def resume(ctx):
     id = ctx.message.server.id
+    await client.say("Wnzawiam")
     players[id].resume()
 
 @client.command(pass_context=True)
 async def stop(ctx):
     id = ctx.message.server.id
+    await client.say("Koniec odtwarzania")
     players[id].stop()
 
 
