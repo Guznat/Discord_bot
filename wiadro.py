@@ -12,6 +12,7 @@ from discord.utils import get
 from discord.voice_client import VoiceClient
 import youtube_dl
 
+# startup_extensions = ["Music"]
 BOT_PREFIX = ("?", "$")
 TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
@@ -34,6 +35,12 @@ async def on_ready():
     print('Bot w gotowosci')
 
 
+
+# class Main_Commands():
+#     def __init__(self, client):
+#         self.client = client
+
+
 @client.event
 async def on_member_join(member):
     role = discord.utils.get(member.server.roles, name='🌿Gość w zakonie')
@@ -53,6 +60,7 @@ async def join(ctx):
     await client.join_voice_channel(channel)
 
 
+
 @client.command(pass_context=True)
 async def leave(ctx):
     server = ctx.message.server
@@ -62,11 +70,25 @@ async def leave(ctx):
 @client.command(pass_context=True)
 async def play(ctx, url):
     server = ctx.message.server
-    voice_client = client.join_voice_channel(server)
-    player = await voice_client.create_ytdl_player(url)
+    voice = client.voice_client_in(server)
+    player = await voice.create_ytdl_player(url, ytdl_options={'default_search': 'auto', 'quality': 'highestaudio', 'liveBuffer':'50000'})
     players[server.id] = player
     player.start()
 
+@client.command(pass_context=True)
+async def pause(ctx):
+    id = ctx.message.server.id
+    players[id].pause()
+
+@client.command(pass_context=True)
+async def resume(ctx):
+    id = ctx.message.server.id
+    players[id].resume()
+
+@client.command(pass_context=True)
+async def stop(ctx):
+    id = ctx.message.server.id
+    players[id].stop()
 
 
 @client.command()
@@ -116,7 +138,6 @@ async def clearsecret(ctx, amount=3):
 
 
 
-
 #                                               ON_MESSAGE EVENTS
 
 
@@ -150,6 +171,17 @@ async def on_message_delete(message):
     author = message.author
     channel = message.channel
     await client.send_message(channel, f'Wiadomość od {author} została skasowana na kanale {channel}')
+
+
+
+# if __name__ == "__main__":
+#     for extension in startup_extensions:
+#         try:
+#             client.load_extension(extension)
+#         except Exception as e:
+#             exc = f"{type(e).__name__}: {e}"
+#             print(f"Failed to load extension {extension}, {exc} ")
+
 
 client.loop.create_task(change_status())
 client.run(TOKEN)
