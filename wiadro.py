@@ -9,16 +9,15 @@ from discord.ext import commands
 from itertools import cycle
 import asyncio
 from discord.utils import get
-from discord.voice_client import VoiceClient
-import youtube_dl
 
-# startup_extensions = ["Music"]
+
+startup_extensions = ["Music"]
 BOT_PREFIX = ("?", "$")
 TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
 client = commands.Bot(command_prefix=BOT_PREFIX)
-players = {}
-status = ['AMENUS','BUCH']
+status = ['AMENUS', 'BUCH']
+
 
 async def change_status():
     await client.wait_until_ready()
@@ -29,16 +28,9 @@ async def change_status():
         await asyncio.sleep(5)
 
 
-
 @client.event
 async def on_ready():
     print('Bot w gotowosci')
-
-
-
-# class Main_Commands():
-#     def __init__(self, client):
-#         self.client = client
 
 
 @client.event
@@ -48,62 +40,19 @@ async def on_member_join(member):
     await client.say(f"```WITAMY W ZAKONIE {member}! Dostajesz rangę: {role}```")
 
 
-
-
-
 #                                          COMMANDS DEFINITIONS
 
 
-@client.command(pass_context=True)
-async def join(ctx):
-    channel = ctx.message.author.voice.voice_channel
-    await client.join_voice_channel(channel)
-    await client.say(f"Dołączono do {channel}")
 
-
-
-@client.command(pass_context=True)
-async def leave(ctx):
-    server = ctx.message.server
-    voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    await client.say(f"Odchodzę z {voice_client}")
-
-@client.command(pass_context=True)
-async def play(ctx, url):
-    server = ctx.message.server
-    voice = client.voice_client_in(server)
-    player = await voice.create_ytdl_player(url, ytdl_options={'default_search': 'auto', 'quality': 'highestaudio', 'liveBuffer':'50000'})
-    players[server.id] = player
-    await client.say(f"Puszczam: {player.title}")
-    player.start()
-
-@client.command(pass_context=True)
-async def pause(ctx):
-    id = ctx.message.server.id
-    await client.say("Zatrzymuje")
-    players[id].pause()
-
-@client.command(pass_context=True)
-async def resume(ctx):
-    id = ctx.message.server.id
-    await client.say("Wnzawiam")
-    players[id].resume()
-
-@client.command(pass_context=True)
-async def stop(ctx):
-    id = ctx.message.server.id
-    await client.say("Koniec odtwarzania")
-    players[id].stop()
 
 
 @client.command()
 async def roll20():
-    #role = discord.utils.get(member.server.roles, name='🌿 Gracz RPG 🎲')
+    # role = discord.utils.get(member.server.roles, name='🌿 Gracz RPG 🎲')
     embed = discord.Embed(
-        title= 'Roll20!',
-        description= 'Wbijać bohaterowie, przygoda czeka! ``` https://roll20.net/ ```',
-        colour = discord.Colour.blue()
+        title='Roll20!',
+        description='Wbijać bohaterowie, przygoda czeka! ``` https://roll20.net/ ```',
+        colour=discord.Colour.blue()
     )
 
     embed.set_footer(text=f'@Gracz RPG (soon)')
@@ -114,22 +63,18 @@ async def roll20():
     await client.say(embed=embed)
 
 
-@client.command()
-async def godzina():
-    date = datetime
-    await client.say(f"Jest {date.hour}:{date.minute} | {date.day}")
-
 
 @client.command()
-async def pogoda(d=49.82,s=19.04):
+async def pogoda(d=49.82, s=19.04):
     url = f'http://api.weatherunlocked.com/api/current/{str(d)},{str(s)}?app_id=b2b042cf&app_key=0b5e4d36d7c17551b832bc12c53f3b43'
     async with aiohttp.ClientSession() as session:  # Async HTTP request
         raw_response = await session.get(url)
         response = await raw_response.text()
         response = json.loads(response)
         print(response)
-        await client.say("W podanej lokalizacji jest teraz: " + str(response['temp_c']) + "°C. Temperatura odczuwalna to: " + str(
-            response['feelslike_c']) + "°C. <:shieet:287968329342386177>")
+        await client.say(
+            "```W podanej lokalizacji jest teraz: " + str(response['temp_c']) + "°C. Temperatura odczuwalna to: " + str(
+                response['feelslike_c']) + "°C. <:shieet:287968329342386177>```")
 
 
 @client.command(pass_context=True)
@@ -142,12 +87,7 @@ async def clearsecret(ctx, amount=3):
     await client.say('Wiadomości skasowane')
 
 
-
-
 #                                               ON_MESSAGE EVENTS
-
-
-
 
 
 @client.event
@@ -161,12 +101,9 @@ async def on_message(message):
     # REACTION
 
     if message.author.id == ('215167611636416514'):
-        PIW = get(client.get_all_emojis(), name='PIW')
-        SKO = get(client.get_all_emojis(), name='SKO')
-        await client.add_reaction(message, PIW)
-        await client.add_reaction(message, SKO)
-        #await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
-
+        mak = get(client.get_all_emojis(), name='mak')
+        await client.add_reaction(message, mak)
+        # await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
 
     # LAST CODE LINE FOR COMMANDS WORKING
     await client.process_commands(message)
@@ -180,14 +117,33 @@ async def on_message_delete(message):
 
 
 
-# if __name__ == "__main__":
-#     for extension in startup_extensions:
-#         try:
-#             client.load_extension(extension)
-#         except Exception as e:
-#             exc = f"{type(e).__name__}: {e}"
-#             print(f"Failed to load extension {extension}, {exc} ")
+
+@client.command()
+async def write():
+    string = str(input("Wpisz cos"))
+    input_list = []
+    output_list = []
+    for i in string.split(" "):
+        for split_i in i:
+            if split_i.lower() == 'a':
+                a= get(client.get_all_emojis(), name='regional_indicator_a')
+                output_list.append(a)
+            elif split_i.lower() == 'b':
+                b = get(client.get_all_emojis(), name='regional_indicator_b')
+                output_list.append(b)
+                #TODO standard emoiji problem
+
+
+    await client.say(output_list)
+
 
 
 client.loop.create_task(change_status())
-client.run(TOKEN)
+if __name__ == "__main__":
+    for extension in startup_extensions:
+        try:
+            client.load_extension(extension)
+        except Exception as e:
+            exc = f"{type(e).__name__}: {e}"
+            print(f"Failed to load extension {extension}, {exc} ")
+    client.run(TOKEN)
