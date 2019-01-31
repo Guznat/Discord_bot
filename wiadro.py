@@ -65,7 +65,7 @@ async def roll20():
 
 
 @client.command()
-async def pogoda(d=49.82, s=19.04):
+async def weather(d=49.82, s=19.04):
     url = f'http://api.weatherunlocked.com/api/current/{str(d)},{str(s)}?app_id=b2b042cf&app_key=0b5e4d36d7c17551b832bc12c53f3b43'
     async with aiohttp.ClientSession() as session:  # Async HTTP request
         raw_response = await session.get(url)
@@ -74,7 +74,7 @@ async def pogoda(d=49.82, s=19.04):
         print(response)
         await client.say(
             "```W podanej lokalizacji jest teraz: " + str(response['temp_c']) + "°C. Temperatura odczuwalna to: " + str(
-                response['feelslike_c']) + "°C. <:shieet:287968329342386177>```")
+                response['feelslike_c']) + "°C.```")
 
 
 @client.command(pass_context=True)
