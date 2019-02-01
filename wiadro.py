@@ -43,6 +43,12 @@ async def on_member_join(member):
 #                                          COMMANDS DEFINITIONS
 
 
+@client.command()
+async  def google(string):
+    googe_url = f"www.google.com/{str(string)}" #api inc.
+    await client.say(str(googe_url))
+
+
 
 
 
@@ -77,15 +83,15 @@ async def weather(d=49.82, s=19.04):
                 response['feelslike_c']) + "°C.```")
 
 
-@client.command(pass_context=True)
-async def clearsecret(ctx, amount=3):
-    channel = ctx.message.channel
-    messages = []
-    async for message in client.logs_from(channel, limit=int(amount)):
-        messages.append(message)
-    await client.delete_messages(messages)
-    await client.say('Wiadomości skasowane')
-
+# @client.command(pass_context=True)
+# async def clearsecret(ctx, amount=3):
+#     channel = ctx.message.channel
+#     messages = []
+#     async for message in client.logs_from(channel, limit=int(amount)):
+#         messages.append(message)
+#     await client.delete_messages(messages)
+#     await client.say('Wiadomości skasowane')
+#TODO This commend needs admin perm only
 
 #                                               ON_MESSAGE EVENTS
 
