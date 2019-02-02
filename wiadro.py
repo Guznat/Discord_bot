@@ -44,8 +44,13 @@ async def on_member_join(member):
 
 
 @client.command()
-async  def google(string):
-    googe_url = f"www.google.com/{str(string)}" #api inc.
+async def google(*args):
+    f_string = []
+    for s in str(args):
+        f_string.append(str(s))
+    final = "".join(f_string).replace(" ", "+").replace(",", "").replace("'", "").replace(")","").replace("(", "")
+    # replace is a best option according https://stackoverflow.com/questions/3411771/multiple-character-replace-with-python
+    googe_url = f"https://www.google.com/search?q={final}"
     await client.say(str(googe_url))
 
 
