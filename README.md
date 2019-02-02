@@ -4,9 +4,11 @@ This is the simple discord bot for my polish discord group. Created for practici
 
 **Avaiable commands:**
 
+**help** - display avaiable commands.
 
 **$roll20** - embed for roll20.com, online paper RPGs site.
 
+**$google** *question* - command for prepared google search url
 
 **$weather x y** - command to check the current weather. 
           Takes latitude and longitude meshes to two decimal places. Deflaut assigned to Bielsko_Biała
@@ -22,6 +24,7 @@ This is the simple discord bot for my polish discord group. Created for practici
 **$resume** - command for resume music.
 
 **$stop** - command for stop music.
+
 
 _More commands inc. soon_
 
