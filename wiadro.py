@@ -11,7 +11,7 @@ import asyncio
 from discord.utils import get
 
 
-startup_extensions = ["Music"]
+startup_extensions = ["Music","exception"]
 BOT_PREFIX = ("?", "$")
 TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
@@ -102,7 +102,23 @@ async def clear(ctx, amount=1):
     else:
         permission_false = str('Wybacz' + ctx.message.author + " nie masz pozwolenia do korzystania z tej komendy")
         await client.say(permission_false)
-#TODO This commend needs admin perm only
+
+
+@client.command()
+async def write():
+    string = str(input("Wpisz cos"))
+    input_list = []
+    output_list = []
+    for i in string.split(" "):
+        for split_i in i:
+            if split_i.lower() == 'a':
+                a= get(client.get_all_emojis(), name='regional_indicator_a')
+                output_list.append(a)
+            elif split_i.lower() == 'b':
+                b = get(client.get_all_emojis(), name='regional_indicator_b')
+                output_list.append(b)
+                #TODO standard emoiji problem
+    await client.say(output_list)
 
 #                                               ON_MESSAGE EVENTS
 
@@ -135,23 +151,7 @@ async def on_message_delete(message):
 
 
 
-@client.command()
-async def write():
-    string = str(input("Wpisz cos"))
-    input_list = []
-    output_list = []
-    for i in string.split(" "):
-        for split_i in i:
-            if split_i.lower() == 'a':
-                a= get(client.get_all_emojis(), name='regional_indicator_a')
-                output_list.append(a)
-            elif split_i.lower() == 'b':
-                b = get(client.get_all_emojis(), name='regional_indicator_b')
-                output_list.append(b)
-                #TODO standard emoiji problem
 
-
-    await client.say(output_list)
 
 
 
