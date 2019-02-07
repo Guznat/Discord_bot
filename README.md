@@ -1,3 +1,5 @@
+![alt text](https://i.imgur.com/zNySJ4I.png)
+
 # Discord_bot
 This is the simple discord bot for my polish discord group. Created for practicing my python skills and helping people.
 
