@@ -11,7 +11,7 @@ import asyncio
 from discord.utils import get
 
 
-startup_extensions = ["Music","exception"]
+startup_extensions = ["Music","exception", "roll"]
 BOT_PREFIX = ("?", "$")
 TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
@@ -41,7 +41,9 @@ async def on_member_join(member):
 
 
 #                                          COMMANDS DEFINITIONS
-
+@client.command()
+async def github():
+    await client.say("www.github.com/Guznat")
 
 @client.command()
 async def google(*args):
@@ -86,6 +88,7 @@ async def weather(d=49.82, s=19.04):
         await client.say(
             "```W podanej lokalizacji jest teraz: " + str(response['temp_c']) + "°C. Temperatura odczuwalna to: " + str(
                 response['feelslike_c']) + "°C.```")
+
 
 
 @client.command(pass_context=True)

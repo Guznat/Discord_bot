@@ -13,6 +13,8 @@ This is the simple discord bot for my polish discord group. Created for practici
 **$weather x y** - command to check the current weather. 
           Takes latitude and longitude meshes to two decimal places. Deflaut assigned to Bielsko_Biała
 
+**$github** - display my github profile url.
+
 **$join** - command by which the bot enters our voicechat.
 
 **$leave** - command by which the bot leaves our voicecchat.
