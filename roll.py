@@ -7,8 +7,9 @@ class Roll:
     def __init__(self, client):
         self.client = client
 
-    @commands.command
-    async def roll(self, *args):
+    @commands.command()
+    async def viking_name(self, message):
+
         female = ['Aldis', ' Alfdisa', ' Alofa', ' Arngud', ' Asgerd', ' Astrid', ' Asvor', ' Aud',
 
                   'Bergthora', ' Berthora', ' Biorgej', ' Blenda', ' Bodvilda', ' Borga', ' Brynhilda',
@@ -121,12 +122,15 @@ class Roll:
                 ' Vestein', ' Vifil', ' Vigdisk', ' Vingor',
 
                 'Yngvar']
-        if args == 'female':
+
+        if message == 'female':
             name = random.choice(female)
-            await self.client.say("||"+name+"||")
-        elif args == 'male':
+            await self.client.say("Imię dla wylosowanej bohaterki to ||"+name+"||!")
+        elif message == 'male':
             name = random.choice(male)
-            await self.client.say("||" + name + "||")
+            await self.client.say("Imię dla wylosowanego bohatera to ||" + name + "||!")
+        else:
+            await self.client.say("Spróbuj $viking_name male / $viking_name female")
 
 
 

@@ -11,7 +11,7 @@ import asyncio
 from discord.utils import get
 
 
-startup_extensions = ["Music","exception", "roll"]
+startup_extensions = ["Music", "exception", "roll"]
 BOT_PREFIX = ("?", "$")
 TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.Dyzp6w.5d6rIT6DXvxtQZQqqNpvu6zBhFI"  # Get at discordapp.com/developers/applications/me
 
@@ -145,11 +145,11 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@client.event
-async def on_message_delete(message):
-    author = message.author
-    channel = message.channel
-    await client.send_message(channel, f'Wiadomość od {author} została skasowana na kanale {channel}')
+# @client.event
+# async def on_message_delete(message):
+#     author = message.author
+#     channel = message.channel
+#     await client.send_message(channel, f'Wiadomość od {author} została skasowana na kanale {channel}')
 
 
 
