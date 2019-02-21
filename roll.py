@@ -8,7 +8,7 @@ class Roll:
         self.client = client
 
     @commands.command()
-    async def viking_name(self, message):
+    async def roll_name(self, message):
 
         female = ['Aldis', ' Alfdisa', ' Alofa', ' Arngud', ' Asgerd', ' Astrid', ' Asvor', ' Aud',
 
