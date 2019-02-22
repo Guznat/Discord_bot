@@ -6,7 +6,7 @@ This is the simple discord bot for my polish discord group. Created for practici
 
 **Avaiable commands:**
 
-**help** - display avaiable commands.
+**$help** - display avaiable commands.
 
 **$roll20** - embed for roll20.com, online paper RPGs site.
 
