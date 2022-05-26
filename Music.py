@@ -1,52 +1,67 @@
 from discord.ext import commands
-import discord
-players = {}
+import lavalink
+from discord import utils
+from discord import Embed
 
-class Music:
-    def __init__(self, client):
-        self.client = client
 
-    @commands.command(pass_context=True)
+class MusicCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.bot.music = lavalink.Client(self.bot.user.id)
+        self.bot.music.add_node('localhost', 7000, 'testing', 'na', 'music-node')
+        self.bot.add_listener(self.bot.music.voice_update_handler, 'on_socket_response')
+        self.bot.music.add_event_hook(self.track_hook)
+
+    @commands.command(name='join')
     async def join(self, ctx):
-        channel = ctx.message.author.voice.voice_channel
-        await self.client.join_voice_channel(channel)
-        await self.client.say(f"Dołączono do {channel}")
+        print('join command worked')
+        member = utils.find(lambda m: m.id == ctx.author.id, ctx.guild.members)
+        if member is not None and member.voice is not None:
+            vc = member.voice.channel
+            player = self.bot.music.player_manager.create(ctx.guild.id, endpoint=str(ctx.guild.region))
+            if not player.is_connected:
+                player.store('channel', ctx.channel.id)
+                await self.connect_to(ctx.guild.id, str(vc.id))
 
-    @commands.command(pass_context=True)
-    async def leave(self, ctx):
-        server = ctx.message.server
-        voice_client = self.client.voice_client_in(server)
-        await voice_client.disconnect()
-        await self.client.say(f"Odchodzę z {voice_client.channel}")
+    @commands.command(name='play')
+    async def play(self, ctx, *, query):
+        try:
+            player = self.bot.music.player_manager.get(ctx.guild.id)
+            query = f'ytsearch:{query}'
+            results = await player.node.get_tracks(query)
+            tracks = results['tracks'][0:10]
+            i = 0
+            query_result = ''
+            for track in tracks:
+                i = i + 1
+                query_result = query_result + f'{i}) {track["info"]["title"]} - {track["info"]["uri"]}\n'
+            embed = Embed()
+            embed.description = query_result
 
-    @commands.command(pass_context=True)
-    async def play(self, ctx, url):
-        server = ctx.message.server
-        voice = self.client.voice_client_in(server)
-        player = await voice.create_ytdl_player(url, ytdl_options={'default_search': 'auto', 'quality': 'highestaudio',
-                                                                   'liveBuffer': '50000'})
-        players[server.id] = player
-        await self.client.say(f"Puszczam: {player.title}")
-        player.start()
+            await ctx.channel.send(embed=embed)
 
-    @commands.command(pass_context=True)
-    async def pause(self, ctx):
-        id = ctx.message.server.id
-        await self.client.say("Zatrzymuje")
-        players[id].pause()
+            def check(m):
+                return m.author.id == ctx.author.id
 
-    @commands.command(pass_context=True)
-    async def resume(self, ctx):
-        id = ctx.message.server.id
-        await self.client.say("Wnzawiam")
-        players[id].resume()
+            response = await self.bot.wait_for('message', check=check)
+            track = tracks[int(response.content) - 1]
 
-    @commands.command(pass_context=True)
-    async def stop(self, ctx):
-        id = ctx.message.server.id
-        await self.client.say("Koniec odtwarzania")
-        players[id].stop()
+            player.add(requester=ctx.author.id, track=track)
+            if not player.is_playing:
+                await player.play()
+
+        except Exception as error:
+            print(error)
+
+    async def track_hook(self, event):
+        if isinstance(event, lavalink.events.QueueEndEvent):
+            guild_id = int(event.player.guild_id)
+            await self.connect_to(guild_id, None)
+
+    async def connect_to(self, guild_id: int, channel_id: str):
+        ws = self.bot._connection._get_websocket(guild_id)
+        await ws.voice_state(str(guild_id), channel_id)
 
 
-def setup(client):
-    client.add_cog(Music(client))
+def setup(bot):
+    bot.add_cog(MusicCog(bot))

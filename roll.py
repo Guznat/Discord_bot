@@ -3,13 +3,12 @@ import random
 
 
 
-class Roll:
+class Roll(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def roll_name(self, message):
-
+    async def roll_name(self, ctx, message):
         female = ['Aldis', ' Alfdisa', ' Alofa', ' Arngud', ' Asgerd', ' Astrid', ' Asvor', ' Aud',
 
                   'Bergthora', ' Berthora', ' Biorgej', ' Blenda', ' Bodvilda', ' Borga', ' Brynhilda',
@@ -123,14 +122,15 @@ class Roll:
 
                 'Yngvar']
 
-        if message == 'female':
+        if message== 'female':
             name = random.choice(female)
-            await self.client.say("Imię dla wylosowanej bohaterki to ||"+name+"||!")
+            await ctx.channel.send("Imię dla wylosowanej bohaterki to ||"+name+"||!")
         elif message == 'male':
             name = random.choice(male)
-            await self.client.say("Imię dla wylosowanego bohatera to ||" + name + "||!")
+            await ctx.channel.send("Imię dla wylosowanego bohatera to ||" + name + "||!")
         else:
-            await self.client.say("Spróbuj $viking_name male / $viking_name female")
+
+            await ctx.channel.send("Spróbuj $roll_name male / $roll_name female")
 
 
 
