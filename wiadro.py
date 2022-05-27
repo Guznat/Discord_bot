@@ -16,13 +16,13 @@ import requests
 
 startup_extensions = ["Music", "exception", "roll", "major"]
 BOT_PREFIX = ("?", "$")
-TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.XDnoDA.0A4cUGYGveXpeZ7lxiQ4sb4Cq1s"  # Get at discordapp.com/developers/applications/me
+TOKEN = "NTMzNjM0NzA3NjYyMDQ1MTg0.G-605R.2iii2S32k_ZeWkt6q8m4YkMVKmdU-ar0nZq0T8"  # Get at discordapp.com/developers/applications/me
 
 
 bot = discord.Client()
 server= bot.get_guild(287944176870359040)
 client = commands.Bot(command_prefix=BOT_PREFIX)
-status = ['LECYMY', 'DUUUR']
+status = ['Gwiazda w górze lśni', 'Pierwszym mym życzeniem jesteś Ty <3']
 
 async def change_status():
     await client.wait_until_ready()
@@ -117,9 +117,14 @@ async def pogoda(ctx, miasto):
     elif miasto=="Białystok":
         d = 53.12
         s = 23.16
+        
     elif miasto =="Opole":
         d=  50.66
         s= 17.92
+        
+    elif miasto =="Łódź":
+        d=  51.45
+        s= 19.28
 
 
 
@@ -147,9 +152,10 @@ async def clear(ctx, amount=1):
     channel = ctx.channel
     if author_id == 215167611636416514:
         messages = []
-        async for message in server.logs_from(channel, limit=int(amount)):
-            messages.append(message)
-        await ctx.delete_messages(messages)
+        #async for message in client.logs_from(channel, limit=int(amount)):
+        #    messages.append(message)
+        await ctx.channel.purge(limit=amount + 1)
+        #await ctx.delete_messages(messages)
         await ctx.send('Wiadomości skasowane')
 
     else:
@@ -195,6 +201,27 @@ async def on_message(ctx):
         await kroniki.send(zdjecie)
         await kroniki.send(author)
     emoji = '<:peepecum:753348146658279435>'
+
+    with open("/home/ubuntu/PycharmProjects/Discord_bot/log.txt", "a") as n:
+        n.write("\n" + "<"+ str(ctx.channel) + "|"+ str(ctx.author) + "|" + str(ctx.created_at)+ "|  " + str(ctx.content) + ">")
+
+
+    
+    random_papaj = [
+"https://i.imgur.com/bTZL9JI.png",
+"https://i.imgur.com/D2OhYez.png",
+"https://i.imgur.com/en9Wiin.png",
+"https://i.imgur.com/6nqyiXO.png",
+"https://i.imgur.com/y5vonDP.png",
+"https://i.imgur.com/Re0lJkU.png",
+"https://i.imgur.com/15UbhBo.png",
+"https://i.imgur.com/p1RQCg1.png",
+"https://i.imgur.com/NYUjsKr.png",
+"https://i.imgur.com/EvQOgYU.png",
+"https://i.imgur.com/EvQOgYU.png",
+"https://i.imgur.com/nw90TvY.png",
+"https://i.imgur.com/Jrx0ZVz.png"]
+
     walenie_konia = [
 "Polerować torpedę",
 "Czochrać bobra",
@@ -326,7 +353,16 @@ async def on_message(ctx):
             await channel.send("Witaj zakonniku!")
 
     if "walić konia" in ctx.content:
-        await  channel.send(random.choice(walenie_konia)+emoji)
+        await	channel.send(random.choice(walenie_konia)+emoji)
+        
+    elif "jakim jestem papajem" in ctx.content:
+         await    channel.send(random.choice(random_papaj))
+
+    elif "mts" in ctx.content:
+         await    channel.send("https://i.imgur.com/770lIXL.png")
+         
+       
+	
 
 
         # await client.send_message(message.channel, 'Witaj mistrzu, dobrze Cię widzieć!')
