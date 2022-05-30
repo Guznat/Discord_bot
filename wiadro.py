@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time, timedelta
 import discord
 import random
 import asyncio
@@ -23,6 +23,7 @@ bot = discord.Client()
 server= bot.get_guild(287944176870359040)
 client = commands.Bot(command_prefix=BOT_PREFIX)
 status = ['Gwiazda w górze lśni', 'Pierwszym mym życzeniem jesteś Ty <3']
+czas_papaja = time(21, 37, 0)
 
 async def change_status():
     await client.wait_until_ready()
@@ -47,6 +48,30 @@ async def on_member_join(member):
 
 
 #                                          COMMANDS DEFINITIONS
+
+async def called_once_a_day():
+    await bot.wait_until_ready()  
+    channel = bot.get_channel(287944176870359040)
+    await channel.send("https://youtu.be/0qzLRlQFFQ4")
+    
+    
+async def background_task():
+    now = datetime.utcnow()
+    if now.time() > czas_papaja:
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()
+        await asyncio.sleep(seconds)   
+    while True:
+        now = datetime.utcnow() 
+        target_time = datetime.combine(now.date(), czas_papaja)
+        seconds_until_target = (target_time - now).total_seconds()
+        await asyncio.sleep(seconds_until_target)  
+        await called_once_a_day() 
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()  
+        await asyncio.sleep(seconds)    
+
+
 @client.command()
 async def github(ctx):
     await ctx.send("www.github.com/Guznat")
@@ -385,6 +410,7 @@ async def on_message(ctx):
 
 
 client.loop.create_task(change_status())
+client.loop.create_task(background_task())
 if __name__ == "__main__":
     for extension in startup_extensions:
         try:
