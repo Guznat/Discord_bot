@@ -23,7 +23,8 @@ bot = discord.Client()
 server= bot.get_guild(287944176870359040)
 client = commands.Bot(command_prefix=BOT_PREFIX)
 status = ['Gwiazda w górze lśni', 'Pierwszym mym życzeniem jesteś Ty <3']
-czas_papaja = time(21, 37, 0)
+czas_papaja = time(13, 39, 10)
+kapitularz = client.get_channel(287944176870359040)
 
 async def change_status():
     await client.wait_until_ready()
@@ -32,13 +33,24 @@ async def change_status():
         current_status = next(msgs)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=current_status))
         await asyncio.sleep(5)
-
+        
+async def daily_message():
+    now = datetime.now()
+    #then = now + datetime.timedelta(days=1)
+    then = now.replace(hour=16, minute=20)
+    wait_time = (then-now).total_seconds()
+    await asyncio.sleep(wait_time)
+    
+    kapitularz = client.get_channel(287944176870359040)
+    
+    await kapitularz.send("test")
 
 @client.event
 async def on_ready():
     print('Bot w gotowosci')
     kapitularz = client.get_channel(287944176870359040)
     #await kapitularz.send('Dobranoc :peepohug:')
+    await daily_message()
 
 @client.event
 async def on_member_join(member):
@@ -49,27 +61,8 @@ async def on_member_join(member):
 
 #                                          COMMANDS DEFINITIONS
 
-async def called_once_a_day():
-    await bot.wait_until_ready()  
-    channel = bot.get_channel(287944176870359040)
-    await channel.send("https://youtu.be/0qzLRlQFFQ4")
-    
-    
-async def background_task():
-    now = datetime.utcnow()
-    if now.time() > czas_papaja:
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
-        seconds = (tomorrow - now).total_seconds()
-        await asyncio.sleep(seconds)   
-    while True:
-        now = datetime.utcnow() 
-        target_time = datetime.combine(now.date(), czas_papaja)
-        seconds_until_target = (target_time - now).total_seconds()
-        await asyncio.sleep(seconds_until_target)  
-        await called_once_a_day() 
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
-        seconds = (tomorrow - now).total_seconds()  
-        await asyncio.sleep(seconds)    
+
+ 
 
 
 @client.command()
@@ -410,8 +403,9 @@ async def on_message(ctx):
 
 
 client.loop.create_task(change_status())
-client.loop.create_task(background_task())
+
 if __name__ == "__main__":
+    
     for extension in startup_extensions:
         try:
             client.load_extension(extension)
